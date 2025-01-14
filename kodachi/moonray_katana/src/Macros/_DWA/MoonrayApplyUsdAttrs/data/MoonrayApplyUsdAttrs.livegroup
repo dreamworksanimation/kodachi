@@ -1,0 +1,38 @@
+<katana release="3.0v1.001470a" version="3.0.1.000001">
+  <node name="__SAVE_exportedNodes" type="Group">
+    <node baseType="Group" modTime="1516753641" name="_MoonrayApplyUsdAttrs" type="Group" x="32.000000" y="-80.000000">
+      <port name="i0" source="MoonrayApplyUSDAttrs_DWA.i0" type="in"/>
+      <port name="o0" returns="o0" type="out"/>
+      <group_parameter name="_MoonrayApplyUsdAttrs"/>
+      <node baseType="OpScript" name="_CopyMoonrayAttrs" type="OpScript" x="32.000000" y="-96.000000">
+        <port name="i0" source="_UsdExtraAttributesOrNamespaces.out" type="in"/>
+        <port name="out" returns="o0" type="out"/>
+        <group_parameter name="_CopyMoonrayAttrs">
+          <string_parameter name="CEL" value="((/root/world/geo//*{hasattr(&quot;geometry&quot;) and hasglobalattr(&quot;moonray&quot;)}))"/>
+          <string_parameter name="location" value="/root/world/location"/>
+          <group_parameter name="script">
+            <string_parameter name="lua" value="moonrayAttr = Interface.GetGlobalAttr(&quot;moonray&quot;)&#0010;moonrayOutputsAttrName = &quot;moonrayMeshStatements.arbitrary outputs&quot;&#0010;local newOutputs = {}&#0010;for i = 0, moonrayAttr:getNumberOfChildren()-1 do&#0010;    local srcName = moonrayAttr:getChildName(i)&#0010;    local name = &quot;geometry.arbitrary.&quot;..srcName&#0010;    Interface.SetAttr(name..&quot;.value&quot;, moonrayAttr:getChildByIndex(i))&#0010;    Interface.SetAttr(name..&quot;.scope&quot;, StringAttribute(&quot;primitive&quot;))&#0010;    newOutputs[#newOutputs+1] = srcName&#0010;end&#0010;if #newOutputs &gt; 0 then&#0010;    local existingOutputs = Interface.GetAttr(moonrayOutputsAttrName)&#0010;    if existingOutputs then&#0010;        newOutputs[#newOutputs+1] = existingOutputs:getValue(&quot;&quot;)&#0010;    end&#0010;    Interface.SetAttr(moonrayOutputsAttrName, StringAttribute(pystring.join(&quot;|&quot;, newOutputs)))&#0010;end&#0010;"/>
+          </group_parameter>
+          <string_parameter name="executionMode" value="immediate"/>
+          <string_parameter name="applyWhere" value="at locations matching CEL"/>
+          <string_parameter name="applyWhen" value="during op resolve"/>
+          <string_parameter name="modifierNameMode" value="node name"/>
+          <string_parameter name="modifierName" value="modifier"/>
+          <string_parameter name="resolveIds" value=""/>
+          <number_parameter name="recursiveEnable" value="0"/>
+          <string_parameter name="disableAt" value=""/>
+          <string_parameter name="inputBehavior" value="by index"/>
+        </group_parameter>
+      </node>
+      <node baseType="UsdExtraAttributesOrNamespaces" name="_UsdExtraAttributesOrNamespaces" nodetypeversion="1" type="UsdExtraAttributesOrNamespaces" x="32.000000" y="-64.000000">
+        <port name="in" source="_MoonrayApplyUsdAttrs.i0" type="in"/>
+        <port name="out" type="out"/>
+        <group_parameter name="_UsdExtraAttributesOrNamespaces">
+          <stringarray_parameter name="extraAttributesOrNamespaces" size="1" tupleSize="1">
+            <string_parameter name="i0" value="moonray"/>
+          </stringarray_parameter>
+        </group_parameter>
+      </node>
+    </node>
+  </node>
+</katana>

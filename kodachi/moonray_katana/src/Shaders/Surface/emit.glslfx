@@ -1,0 +1,34 @@
+-- glslfx version 0.1
+
+-- configuration
+{
+    "textures": {
+        "diffuseTexture": {
+            "documentation" : "Diffuse texture."
+        }
+    },
+    "parameters": {
+        "flipT" : {
+            "default" : true,
+            "documentation" : "Flip the direction of the T texture coordinates"
+        }
+    },
+    "techniques" : {
+        "default" : {
+            "surfaceShader" : {
+                "source": [ "KatanaLighting.SurfaceLighting" ]
+            }
+       }
+    }
+}
+
+-- glsl KatanaLighting.SurfaceLighting
+
+// ---------------------------------------------------------------------------
+// lighting functions
+// ---------------------------------------------------------------------------
+
+vec4 surfaceShader(vec4 Peye, vec3 Neye, vec4 color, vec4 patchCoord)
+{
+    return color * HdGet_diffuseTexture(HdGet_st());
+}

@@ -1,0 +1,84 @@
+<!-- Copyright 2025 DreamWorks Animation LLC
+     SPDX-License-Identifier: Apache-2.0 -->
+
+<args format='1.0' scope='/root' fixedCEL='/root'>
+	<group name='moonrayArrasSettings' hideTitle='True'
+		widget='pagedargs' closed='False' groupInherit='False'>
+		<int name="use arras" default='0' widget="checkBox" />
+		<string name="datacenter" default="gld" editable="true"
+			widget="popup">
+			<hintlist name='options'>
+				<string value="gld" />
+				<string value="las" />
+			</hintlist>
+		</string>
+		<string name="environment" default="prod" editable="true"
+			widget="popup">
+			<hintlist name='options'>
+				<string value="prod" />
+				<string value="stb" />
+				<string value="uns" />
+			</hintlist>
+		</string>
+		<int name="connectionTimeout" label="connection timeout"
+			default='60' help="time in seconds to wait for the Arras connection" />
+		<int name="connectionRetryCount" label="connection retry count"
+			default='2'
+			help="number of times to retry establishing the Arras connection before failing." />
+		<int name="connectionRetryDelay" label="connection retry delay"
+			default='15'
+			help="time in seconds to wait between connection retries." />
+		<string name="logging mode" default="computation"
+			widget="popup"
+			help="computation: In the single machine case print the logs for the render computation, in the multi-machine case print the logs for the 0th render computation. session: print the logs for every computation in the session.">
+			<hintlist name='options'>
+				<string value="computation" />
+				<string value="session" />
+				<string value="disabled" />
+			</hintlist>
+		</string>
+		<page name="Session Options"
+			help="Options and overrides for the Arras session that will be created. When using multiple render computations, a dispatch and merge computation are added to the session.">
+			<int name="render computations" default="2"
+				help="Number of render computations to use in the session. Uses the 'kodachi_render' session definition when set to 1, otherwise 'kodachi_render_n'." />
+			<int name="cores per computation" default="30"
+				help="Number of threads to be reserved per computation (excluding the dispatch)." />
+			<string name="cores per computation mode" default="minimum"
+				widget="popup"
+				help="Mode for how to use the 'cores per computation' attribute. 'minimum': each render computation must have at least 'cores per computation' cores. 'exact': each render computation must have exactly 'cores per computation cores'.">
+				<hintlist name="options">
+					<string value="minimum" />
+					<string value="exact" />
+				</hintlist>
+			</string>
+			<int name="memory per computation" default="20480"
+				help="Memory to be reserved per render computation. Use 'memory units' attribute to specify MB or GB. Default value is in MB." />
+			<string name="memory units" default="MB" widget="popup"
+				help="The units for the 'memory per computation' attribute">
+				<hintlist name='options'>
+					<string value="MB" />
+					<string value="GB" />
+				</hintlist>
+			</string>
+			<float name="frames per second" default="5"
+				help="Maximum framerate." />
+			<int name="render from cwd" default="1" widget="checkBox"
+				help="Attempt to run the Arras render from your current working directory." />
+			<string name="cwd override" widget="assetIdInput" fileTypes=""
+				help="Directory to root the session from. Defaults to the current working directory." />
+			<int name="use local machine" default="0" widget="checkBox"
+				help="If your local machine is in the Arras pool, enabling this attribute allows it to be used in the session." />
+			<page name="Production Information"
+				help="This information is used by Arras to determine if resources reserved for a production or a team within a production can be used by this session.">
+				<string name="production" />
+				<string name="sequence" />
+				<string name="shot" />
+				<string name="asset group" />
+				<string name="asset" />
+				<string name="department" />
+				<string name="team"
+					help="Only taken into account if 'production' is also set." />
+			</page>
+		</page>
+	</group>
+</args>

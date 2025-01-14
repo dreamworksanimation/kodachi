@@ -1,0 +1,74 @@
+<!-- Copyright 2025 DreamWorks Animation LLC
+     SPDX-License-Identifier: Apache-2.0 -->
+
+<args format='1.0' scope='/root/world//*{attr("type")=="camera"}'>
+	<group name='geometry' hideTitle='True'>
+	  <string name="projection" default="perspective" widget="popup"
+                  help="Override geometry.projection with extra types accepted by Moonray">
+            <hintlist name="options">
+              <string value="perspective" />
+              <string value="orthographic" />
+              <string value="domeMaster3D" />
+              <string value="bake" />
+              <string value="spherical" />
+            </hintlist>
+          </string>
+        </group>
+	<group name='moonrayCameraStatements' hideTitle='True'
+	       widget='pagedargs' closed='True' groupInherit='False'>
+	  <int name="dof" default='0' widget="checkBox"/>
+	  <float name="dof_aperture" label="dof aperture" default='8' />
+	  <float name="mb_shutter_open" label="mb shutter open" default="-0.25"
+                 help="Frame relative shutter open time in UsdTimeCode units (negative value indicates that the shutter opens before the current frame time). Used for motion blur." />
+	  <float name="mb_shutter_close" label="mb shutter close" default="0.25"
+                 help="Frame relative shutter close time, analogous comments from mb_shutter_open apply. A value greater or equal to mb_shutter_open should be authored, otherwise there is no exposure and a renderer should produce a black image."/>
+	  <float name="mb_shutter_bias" label="mb shutter bias" default="0.0"
+                 help="Frame relative shutter bias time, to direct the effect of motion blur over the course of the shutter duration."/>
+	  <string name="pixel_sample_map" label="pixel sample map" widget="fileInput"/>
+          <page name='BakeCamera'>
+            <string name="geometry" widget="scenegraphLocation" />
+            <int name="udim" help="udim tile to bake" default='1001'/>
+            <string name="uv_attribute" help="Specifies a Vec2f primitive attribute to use as the uv coordinates.  If empty, the default uv for the mesh is used.  The uvs must provide a unique parameterization of the mesh, i.e. a given (u, v) can appear only once on the mesh being baked." />
+            <int name="mode" default='3' help="How to generate primary rays" widget="mapper">
+              <hintdict name="options">
+                <int name="from camera to surface" value='0'/>
+                <int name="from surface along normal" value='1'/>
+                <int name="from surface along reflection vector" value='2'/>
+                <int name="above surface reverse normal" value='3'/>
+              </hintdict>
+            </int>
+            <float name="bias" default="0.003" help="Ray-tracing offset for primary ray origin" />
+            <int name="use_relative_bias" label="use relative bias" default="1" widget="checkBox"
+                 help="bias is scaled based on position magnitude" />
+            <float name="map_factor" label="map factor" default="1"
+                   help="Increase or decrease the internal position map buffer resolution" />
+            <string name="normal_map" label="normal map" widget="fileInput"
+                    help="Use this option to supply your own normals that are used when computing ray directions.  Without this option, normals are computed from the geometry and do not take into account any material applied normal mapping." />
+            <int name="normal_map_space" label="normal map space" default="0"
+                 help="Use camera space if you generated per frame normal maps in a pre-pass using the normal material aov.  You probably want to use tangent space if you are using a normal map that is also used in the surfacing setup." widget="mapper">
+              <hintdict name="options">
+                <int name="camera space" value='0'/>
+                <int name="tangent space" value='1'/>
+              </hintdict>
+            </int>
+	  </page>
+          <page name='DomeMaster3DCamera'>
+            <int name="flip_ray_x" label="flip ray x" default="0" widget="checkBox" />
+            <int name="flip_ray_y" label="flip ray y" default="0" widget="checkBox" />
+            <int name="stereo_view" label="stereo view" default="0" widget="mapper">
+              <hintdict name="options">
+                <int name="center view" value='0'/>
+                <int name="left view" value='1'/>
+                <int name="right view" value='2'/>
+              </hintdict>
+            </int>
+            <float name="stereo_convergence_distance" label="stereo convergence distance"
+                   default="360" />
+            <float name="stereo_interocular_distance" label="stereo interocular distance"
+                   default="6.5" />
+            <string name="interocular_distance_map_file_name" label="interocular distance map" widget="fileInput"/>
+            <string name="head_tilt_map" label="head tilt map" widget="scenegraphLocation" />
+            <int name="zenith_mode" label="zenith mode" default="0" widget="checkBox" />
+	  </page>
+	</group>
+</args>

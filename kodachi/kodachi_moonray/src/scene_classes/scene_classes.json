@@ -1,0 +1,82 @@
+{
+	"moonray version" : "unspecified",
+	"scene_classes" : 
+	{
+	    "BarnDoorsLightFilter" : 
+		{
+			"attributes" : 
+			{
+				"top_left" : 
+				{
+					"attrType" : "Vec2f",
+					"default" : [ 0.0, 0.0 ],
+					"order" : 0,
+					"metadata" :
+					{
+						"min" : "0.0f",
+						"max" : "1.0f"
+					}
+				},
+				"top_right" : 
+				{
+					"attrType" : "Vec2f",
+					"default" : [ 0.0, 0.0 ],
+					"order" : 1,
+					"metadata" :
+					{
+						"min" : "0.0f",
+						"max" : "1.0f"
+					}
+				},
+				"bottom_left" : 
+				{
+					"attrType" : "Vec2f",
+					"default" : [ 0.0, 0.0 ],
+					"order" : 2,
+					"metadata" :
+					{
+						"min" : "0.0f",
+						"max" : "1.0f"
+					}
+				},
+				"bottom_right" : 
+				{
+					"attrType" : "Vec2f",
+					"default" : [ 0.0, 0.0 ],
+					"order" : 3,
+					"metadata" :
+					{
+						"min" : "0.0f",
+						"max" : "1.0f"
+					}
+				},
+				"distance_from_light" : 
+				{
+					"attrType" : "Float",
+					"default" : 0.0,
+					"order" : 4,
+					"metadata" :
+					{
+						"min" : "0.0f"
+					}
+				}
+			},
+			"grouping" : 
+			{
+				"groups" : 
+				{
+					"Properties" : 
+					[
+						"top_left",
+						"top_right",
+						"bottom_left",
+						"bottom_right",
+						"distance_from_light"
+					]
+				},
+				"order" : [ "Properties" ]
+			},
+			"type" : "LightFilter"
+		}
+	}
+}

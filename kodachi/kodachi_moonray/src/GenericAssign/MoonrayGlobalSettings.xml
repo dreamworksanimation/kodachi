@@ -1,0 +1,274 @@
+<!-- Copyright 2025 DreamWorks Animation LLC
+     SPDX-License-Identifier: Apache-2.0 -->
+
+<args format='1.0' scope='/root' fixedCEL='/root'>
+	<group name='moonrayGlobalStatements' hideTitle='True'
+		widget='pagedargs' closed='True' groupInherit='False'>
+		<page name='Motion and Scale'>
+			<float name="scene scale" default="0.010000"
+				help="(in meters): one unit in world space = 'scene scale' meters" />
+		</page>
+		<page name='Sampling'>
+			<int name="sampling_mode" label="sampling mode" default="0"
+				widget="mapper"
+				help="Controls which sampling scheme to use, defaults to uniform sampling.">
+				<hintdict name="options">
+					<int name="uniform" value="0" />
+					<int name="adaptive" value="2" />
+				</hintdict>
+			</int>
+			<int name="min_adaptive_samples" label="min adaptive samples"
+				default="16"
+				help="When adaptive sampling is turned on, it's possible that a tile may be mis-classified as having converged before it has actually converged. This manifests itself as square 8x8 artifacts in the final image. The higher this value, the less the chance of this happening.">
+				<hintdict name="conditionalVisOps">
+					<string name="conditionalVisOp" value="equalTo"/>
+					<string name="conditionalVisPath" value="../sampling_mode"/>
+					<string name="conditionalVisValue" value="2"/>
+				</hintdict>
+			</int>
+			<int name="max_adaptive_samples" label="max adaptive samples"
+				default="4096"
+				help="When adaptive sampling is turned on, this represents the max number of samples we can throw at a pixel. It's best to err on the high side since adaptive sampling will cull out samples where they're not needed based on the target adaptive error, in which case we should rarely hit the max samples value.">
+				<hintdict name="conditionalVisOps">
+					<string name="conditionalVisOp" value="equalTo"/>
+					<string name="conditionalVisPath" value="../sampling_mode"/>
+					<string name="conditionalVisValue" value="2"/>
+				</hintdict>
+			</int>
+			<float name="target_adaptive_error"
+				label="target adaptive error" default="10"
+				help="When adaptive sampling is turned on, this represents the desired quality of the output images. Lower values will give higher quality but take longer to render. Higher values will give lower quality but render quicker.">
+				<hintdict name="conditionalVisOps">
+					<string name="conditionalVisOp" value="equalTo"/>
+					<string name="conditionalVisPath" value="../sampling_mode"/>
+					<string name="conditionalVisValue" value="2"/>
+				</hintdict>
+			</float>
+			<int name="pixel samples" default="8" help="The square root of uniform pixel samples">
+				<hintdict name="conditionalVisOps">
+					<string name="conditionalVisOp" value="equalTo"/>
+					<string name="conditionalVisPath" value="../sampling_mode"/>
+					<string name="conditionalVisValue" value="0"/>
+				</hintdict>
+			</int>
+			<int name="light samples" default="2" />
+			<int name="bsdf samples" default="2" />
+			<int name="bssrdf samples" default="2" />
+			<int name="max depth" default="5" />
+			<int name="max diffuse depth" default="2" />
+			<int name="max glossy depth" default="2" />
+			<int name="max mirror depth" default="3" />
+			<int name="max presence depth" default="16" />
+			<int name="max_hair_depth" label="max hair depth" default="5"/>
+			<int name="max_subsurface_per_path" label="max subsurface per path" default="1"/>
+			<float name="russian roulette threshold" default="0.000100" />
+			<float name="transparency threshold" default="1.0"
+				help="Defines at which point the accumulated opacity can be considered as opaque, skipping generation of new transparency rays." />
+			<float name="presence_threshold" label="presence threshold" default="0.999"
+				help="Defines at which point the accumulated presence can be considered as opaque, skipping generation of presence continuation rays." />
+			<int name="lock frame noise" widget="checkBox" default="0" />
+		</page>
+		<page name='Path Guide'>
+			<int name="path_guide_enable" widget="checkBox" label="path guide enable" default='0' help="Turn on path guiding to handle difficult light transport problems (e.g. caustics) at the cost of increased memory"/>
+		</page>
+		<page name='Volumes'>
+			<int name="volume_overlap_mode" label="volume overlap mode" default="0"
+				widget="mapper"
+				help="Selects how to handle contributions from overlapping volumes: (0) sum (default): add contributions from all volumes; (1) max: only consider maximum volume based on extinction; (2) rnd: randomly choose one value weighted by extinction">
+				<hintdict name="options">
+					<int name="sum" value="0" />
+					<int name="max" value="1" />
+					<int name="rnd" value="2" />
+				</hintdict>
+			</int>
+			<int name="max volume depth" default="1" />
+			<float name="volume quality" default="0.5"
+				help="Controls the overall quality of volume rendering. The higher number gives better volume shape detail and more accurate scattering integration result." />
+			<float name="volume shadow quality" default="1.0"
+				help="Controls the quality of volume shadow (transmittance). The higher number gives more accurate volume shadow." />
+			<int name="volume illumination samples" default="4"
+				help="Sample number along the ray when computing volume scattering radiance towards the eye. Set to 0 to turn off volume lighting completely." />
+			<float name="volume opacity threshold" default="0.995"
+				help="As a ray travels through volume regions, it will accumulate the amount of opacity. When the value exceeds volume opacity threshold the renderer will stop the further volume integration alone this ray." />
+			<float name="volume attenuation factor" default="0.65"
+				help="Controls how volume attenuation gets exponentially scaled down when rendering multiple scattering volumes. Dialing down the value generally results in more translucent look. This variable is only effective when 'max volume depth' is greater than 1." />
+			<float name="volume contribution factor" default="0.65"
+				help="Controls how scattering contribution gets exponentially scaled down when rendering multiple scattering volumes. Dialing down the value generally results in a darker volume scattering look. This variable is only effective when 'max volume depth' is greater than 1." />
+			<float name="volume phase attenuation factor" default="0.5"
+				help="Controls how phase function(anisotropy) gets exponentially scaled down when rendering multiple scattering volumes. This variable is only effective when 'max volume depth' is greater than 1." />
+		</page>
+		<page name='Fireflies Removal'>
+			<float name="sample clamping value" default="0.0"
+				help="clamp sample values to a maximum (disabled if 0.0). Warning: Using this technique is biased" />
+			<int name="sample clamping depth" default="1"
+				help="clamp sample values only after given non-specular depth" />
+			<float name="roughness clamping factor" default="0.0"
+				help="clamp material roughness along paths to some extent (set value to [0..1]), to prevent fireflies from indirect caustics. Warning: Using this technique is biased" />
+		</page>
+		<page name='Filtering'>
+			<float name="texture blur" default="0.0" />
+			<float name="pixel filter width" default="3.0" />
+			<int name="pixel filter" widget="mapper" default="1">
+				<hintdict name='options'>
+					<int name="box" value="0" />
+					<int name="cubic b-spline" value="1" />
+					<int name="quadratic b-spline" value="2" />
+				</hintdict>
+			</int>
+		</page>
+		<page name='Deep Images'>
+			<string name="deep_format" label="deep format" widget="popup" default="opendcx2.0" help="Deep image format: openexr2.0: vanilla OpenEXR deep, opendcx2.0: DCX abuffer mask encoding">
+				<hintlist name="options">
+					<string value="openexr2.0"/>
+					<string value="opendcx2.0"/>
+				</hintlist>
+			</string>
+			<float name="deep curvature tolerance" default="45.0"
+				help="Maximum curvature (in degrees) of the deep surface within a pixel before it is split" />
+			<float name="deep_z_tolerance" label="deep z tolerance" default="2.0"
+				help="Maximum range of the deep surface's Z values within a pixel before it is split" />
+			<int name="deep_vol_compression_res" label="deep vol compression res" default="10" help="Volume opacity compression resolution.  Lower values gives higher compression."/>
+                        <int name="deep_max_layers" label="deep max layers" default="1" help="The maximum number of depth layers to output."/>
+                        <float name="deep_layer_bias" label="deep layer bias" default="0.1" help="Minimum distance between deep layers."/>
+			<string name="deep_id_attribute_names" label="deep ID attribute names" widget="sortableArray"
+				forceArray="True"
+				help="Names of primitive attributes containing deep IDs" />
+		</page>
+		<page name='Caching'>
+			<int name="texture cache size" default="4000"
+				help="size is in Mb and this is the maximum cache size" />
+			<int name="texture file handles" default="24000"
+				help="maximum number of simultaneous open file handles" />
+			<int name="fast geometry update" widget="boolean" default="0" />
+		</page>
+		<page name='Global Toggles'>
+			<!-- Motion blur is enabled based on renderSettings values. Toggle purposefully not added. -->
+			<int name="enable DOF" widget="boolean" default="1" />
+			<int name="enable max geometry resolution" widget="boolean"
+				default="0" />
+			<int name="max geometry resolution" default="2147483647" />
+			<int name="enable displacement" widget="boolean" default="1" />
+			<int name="enable subsurface scattering" widget="boolean"
+				default="1" />
+			<int name="enable shadowing" widget="boolean" default="1" />
+			<int name="enable presence shadows" widget="boolean" default="0" />
+			<int name="enable light blocking" widget="boolean" default="1" />
+			<int name="lights visible in camera" widget="boolean" default="0" />
+			<int name="propagate visibility bounce type" widget="boolean"
+				default="0" help="turns on/off propagation for ray visibility masks" />
+		</page>
+		<page name='Driver'>
+			<int name="interactive mode" widget="boolean" default="0" />
+			<int name="progressive shading" widget="boolean" default="0" />
+			<string name="dso path" default="." />
+			<int name="jit compile shaders" widget="mapper" default="0">
+				<hintdict name='options'>
+					<int name="Off" value="0" />
+					<int name="Shallow" value="1" />
+					<int name="Deep" value="2" />
+				</hintdict>
+			</int>
+		</page>
+		<page name='Tile Order'>
+			<int name="batch tile order" widget="mapper" default="4">
+				<hintdict name='options'>
+					<int name="top" value="0" />
+					<int name="bottom" value="1" />
+					<int name="left" value="2" />
+					<int name="right" value="3" />
+					<int name="morton" value="4" />
+					<int name="random" value="5" />
+					<int name="spiral square" value="6" />
+					<int name="spiral rect" value="7" />
+				</hintdict>
+			</int>
+			<int name="progressive tile order" widget="mapper" default="4">
+				<hintdict name='options'>
+					<int name="top" value="0" />
+					<int name="bottom" value="1" />
+					<int name="left" value="2" />
+					<int name="right" value="3" />
+					<int name="morton" value="4" />
+					<int name="random" value="5" />
+					<int name="spiral square" value="6" />
+					<int name="spiral rect" value="7" />
+				</hintdict>
+			</int>
+		</page>
+		<page name='Logging'>
+			<int name="debug" widget="boolean" default="0" />
+			<int name="info" widget="boolean" default="0" />
+			<int name="warning" widget="boolean" default="1" />
+			<int name="error" widget="boolean" default="1" />
+			<float name="fatal color" widget="color" default="1,0,1"
+				size="3" />
+			<string name="stats file" widget="fileInput" />
+			<int name="athena debug" widget="boolean" default="0" />
+		</page>
+		<page name='Debug'>
+			<int name="debug pixel" default="-2147483648,-2147483648"
+				size="2" />
+			<string name="debug rays file" />
+			<int name="debug rays primary range"
+				default="-2147483648,-2147483648" size="2" />
+			<int name="debug rays depth range"
+				default="-2147483648,-2147483648" size="2" />
+		</page>
+		<page name="Scene Build">
+			<int name="multi threaded" default='1' widget="checkBox" />
+			<string name="scene file output"
+				fileTypes="rdla|rdlb" help="Location to write rdla|rdlb file" />
+			<int name="use_rdl_geometry" label="use rdl geometry" widget="checkBox" default="0" help="Use RdlGeometry procedurals instead of KodachiGeometry procedurals. This allows for rdl files to be generated with fewer dependencies, at the cost of readability and higher memory usage."/>
+			<int name="skip render" widget="boolean" default="0"
+				help="Returns from rendering once the Moonray scene is built." />
+			<int name="cacheCreationMode" label="cache creation mode" widget="boolean" default="0" help="Only intended to be used for disk renders. Should only be enabled manually for debugging purposes, otherwise set automatically by farm submission for cache passes. Ops that use the Kodachi cache will only run on locations that don't already have a cache entry on disk. Cache entries aren't stored in memory. The scene context is not built and the render is skipped.">
+				<hintdict name="conditionalVisOps">
+					<string name="conditionalVisOp" value="equalTo"/>
+					<string name="conditionalVisPath" value="../skip render"/>
+					<string name="conditionalVisValue" value="1"/>
+				</hintdict>
+			</int>
+			<int name="log limit" widget="mapper" default="1">
+				<hintdict name='options'><!--Note: these match the KdLogging severity
+						enum -->
+					<int name="Error" value="3" />
+					<int name="Warning" value="2" />
+					<int name="Info" value="1" />
+					<int name="Debug" value="0" />
+				</hintdict>
+			</int>
+			<int name="reuse cached materials" widget="boolean" default="1" />
+			<int name="lightsetCaching" widget="boolean" default="1" />
+			<int name="primitiveAttributeCaching" widget="boolean"
+				default="1" />
+			<int name="autoInstancing" widget="boolean" default="1" help="Uses instancing for geometry locations that share the same attributes and materials. Disabled during live render." />
+			<int name="max curve clump size" default="1000000" widget="null"
+				help="The maximum number of curves a single renderer object can contain. Curve locations with more than this number will be split into multiple objects." />
+			<int name="disable object splitting" default='0'
+				widget="checkBox"
+				help="Certain location types can be split into multiple renderer objects to improve scene build times. Enable this option to disable this behavior." />
+			<int name="id pass snapshot delay" default='1000'
+					help="time in ms to wait before sending the ID pass." />
+			<string name="scene file input" widget="sortableArray"
+				panelWidget="fileInput" fileTypes="rdla|rdlb"
+				help="rdla|rdlb file to load" />
+		</page>
+		<page name='Render'>
+			<page name='Options'>
+			    <float name="live_render_fps" label="live render fps" default="50" help="Number of live render frames per second."/>
+			    <float name="preview_render_fps" label="preview render fps" default="10" help="Number of preview render frames per second."/>
+				<int name="vectorized" widget="mapper" default="2"
+					help="enable vectorized rendering">
+					<hintdict name='options'>
+						<int name="auto" value="0" />
+						<int name="vectorized" value="1" />
+						<int name="scalar" value="2" />
+					</hintdict>
+				</int>
+			</page>
+            <int name="screen_window_offset" label="screen window offset" default="0,0" size="2" help="Lower-left corner of viewport window for the chosen image format. Width/height is in resolution."/>
+            <int name="format_aperture_window" label="format aperture window" default="0,0,0,0" size="4" help="Aperture window for the chosen image format. Used in combination with viewport window."/>
+            <float name="pixel_aspect_ratio" label="pixel aspect ratio" default="1" help="Ratio of pixel width to height."/>
+		</page>
+	</group>
+</args>

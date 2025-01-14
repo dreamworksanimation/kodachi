@@ -1,0 +1,77 @@
+<!-- Copyright 2025 DreamWorks Animation LLC
+     SPDX-License-Identifier: Apache-2.0 -->
+
+<args format='1.0' scope='/root/world//* /root/world'>
+	<group name='moonrayStatements' hideTitle='True' closed='True'>
+		<page name="Geometry">
+			<string name="label" help="label used in material aov expressions" />
+			<int name="static" default='1' widget="null"
+				help="disable if the geometry will be updated between frames" />
+			<int name="side type" default='0' widget="mapper"
+				help="set single sidedness of the mesh, will affect the visibility of the mesh based on normal direction">
+				<hintdict name="options">
+					<int name="force two-sided" value='0' />
+					<int name="force single-sided" value='1' />
+					<int name="use mesh sidedness" value='2' />
+				</hintdict>
+			</int>
+			<int name="reverse normals" default='0' widget="checkBox"
+				help="enable to reverse the normals in the geometry" />
+            <int name="cutout" default='0' widget="checkBox"
+                help="designate a geometry as a cutout" />
+			<page name="Visibility">
+				<int name="visible in camera" default='1' widget="checkBox"
+					help="is the geometry visible through the camera" />
+				<int name="visible shadow" default='1' widget="checkBox"
+					help="is the shadow of this geometry visible (is it casting a shadow)" />
+				<int name="visible diffuse reflection" default='1' widget="checkBox"
+					help="is the diffuse reflection of this geometry visible" />
+				<int name="visible diffuse transmission" default='1' widget="checkBox"
+					help="is the diffuse transmission of this geometry visible" />
+				<int name="visible glossy reflection" default='1' widget="checkBox"
+					help="is the glossy reflection of this geometry visible" />
+				<int name="visible glossy transmission" default='1' widget="checkBox"
+					help="is the glossy transmission of this geometry visible" />
+				<int name="visible mirror reflection" default='1' widget="checkBox"
+					help="is the mirror reflection of this geometry visible" />
+				<int name="visible mirror transmission" default='1' widget="checkBox"
+					help="is the mirror transmission of this geometry visible" />
+				<int name="visible volume" default='1' widget="checkBox"
+					help="is this geometry visible to volumes" />
+			</page>
+			<page name="Motion Blur">
+				<string name="motion_blur_type" label="motion blur type" default="best" widget="popup">
+					<hintlist name='options'>
+						<string value="static"/>
+						<string value="velocity"/>
+						<string value="frame delta"/>
+						<string value="acceleration"/>
+						<string value="hermite"/>
+						<string value="best"/>
+					</hintlist>
+				</string>
+				<int name="use_rotation_motion_blur" label="use rotation motion blur" default='0' widget="checkBox" help="if 'xform' is time varying and motion blur is turned on, this toggle can generate a better rotation trail. Known limitation: turning on this toggle will disable adaptive tessellation"/>
+				<int name="curved_motion_blur_sample_count" label="curved motion blur sample count" default='10' help="Number of time samples generated along each curve when using curved motion blur"/>
+				<float name="velocity_scale" label="velocity scale" default='1.0' help="Adjust magnitude of velocity-based motion blur"/>
+			</page>
+		</page>
+		<group name="sceneBuild" label="Scene Build">
+			<int name="parallelTraversal" default='1' widget="checkBox"
+				help="When disabled, scenegraph traversal for this location's children will occur on the thread that processed this location. Useful for locations that are expensive to compute (or expensive to cache)." />
+			<int name="autoInstancing" default='1' widget="checkBox"
+			    help="When disabled, this geometry will not be evaluated for auto-instancing."/>
+		</group>
+	    <group name="arbitraryAttrs">
+	      <int name = "whitelistMode" default='0' widget="mapper"
+	           help="'auto' adds to the whitelist by looking at material nodes of the geometry and its facesets. For AttributeMaps, the 'primitive_attribute_name' attribute is used. For 'instance array' locations, arbitrary attributes of scope 'point' are whitelisted. To see the whitelisted attributes for other shader types, look at the OpDescription of KPOPArbitraryAttrWhitelist for more information. This can be viewed in the Katana OpBrowser from the Tabs>Debug Menu.">
+	           <hintdict name="options">
+	                <int name="auto" value='0' />
+                    <int name="enabled" value='1' />
+                    <int name="disabled" value='2' />
+	           </hintdict>
+          </int>
+          <string name="whitelist" isDynamicArray='1' tupleSize="1" widget="sortableDelimitedString" help="The names of 'geometry.arbitrary' attributes to set on the object. If empty, no attributes are set."/>
+        </group>
+	</group>
+</args>
+		

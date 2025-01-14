@@ -1,0 +1,46 @@
+<!-- Copyright 2025 DreamWorks Animation LLC
+     SPDX-License-Identifier: Apache-2.0 -->
+
+<args format='1.0' scope='/root/world//*{attr("type")=="subdmesh" or attr("type")=="polymesh"}' >
+	<group name='moonrayMeshStatements' hideTitle='True' closed='True'>
+		<float name="mesh_resolution" label="mesh resolution" default='2' help="The maximum resolution to tessellate a mesh. An edge on input face will be tessellated to at most n segments when 'mesh resolution' is set to n. If 'adaptive error' is set to 0, every edge on input face will be uniformly tessellated to 'mesh resolution'. Otherwise renderer will adaptively tessellate mesh based on camera information."/>
+		<float name="adaptive error" default='0' help="The maximum allowable difference in pixels for subdivison mesh adaptive tessellation (each final tessellated edge won't be longer than n pixels if adaptive error is set to n).A value of 0 disables adaptive tessellation, reverting to uniform tessellation, which sometimes is more stable in animation."/>
+		<int name="reverse winding order" default='1' widget="checkBox" help="Moonray uses a CCW winding order. Reverse the winding order during Scene Build to match. (Alembic and USDC uses a CW winding order)"/>
+		<int name="perPartIDs" label="per part IDs" default="0" widget="checkBox" help="Create per-part instead of per-geometry IDs for the Katana ID pass and Cryptomatte. This makes the mesh ineligible for auto-instancing since Moonray does not support instances having per-part arbitrary attributes."/>
+		<page name="SubdivisionMesh">
+			<int name="subd_scheme" label="subd scheme" default='1' widget="mapper" help="CatClark or Bilinear">
+				<hintdict name="options">
+					<int name="bilinear" value='0'/>
+					<int name="catclark" value='1'/>
+				</hintdict>
+			</int>
+		</page>
+		<page name="PolygonMesh">
+			<int name="smooth_normal" label="smooth normal" default='1' help="generate smooth shading normal when rendering PolygonMesh and the mesh doesn't provide shading normal itself"/>
+		</page>
+			<group name="autoInstancing" label="auto instancing" help="Parameters for controlling the auto-instancing behavior of a mesh">
+				<int name="disableAdaptiveError" label="disable adaptive error" default="1" widget="checkBox" help="An 'adaptive error' value greater than 0 makes meshes dependent on their position to the render camera. This technically makes otherwise identical meshes unsuitable for auto-instancing since Moonray will tesselate them differently. Enable this value to force this behavior, otherwise adaptive error will be disabled in the case that this mesh participates in auto-instancing."/>
+				<int name="clampMeshResolution" label="clamp mesh resolution"  default="1" widget="checkBox" help="In the case that adaptive error is disabled so that this mesh can participate in auto-instancing, clamp the 'mesh_resolution' value.">
+				<hintdict name="conditionalVisOps">
+					<string name="conditionalVisOp" value="equalTo"/>
+					<string name="conditionalVisPath" value="../disableAdaptiveError"/>
+					<string name="conditionalVisValue" value="1"/>
+				</hintdict>
+				</int>
+				<int name="meshResolution" default="4" help="The value to clamp 'mesh_resolution' to when 'clampMeshResolution' is enabled.">
+				<hintdict name="conditionalVisOps">
+					<string name="conditionalVisOp" value="and"/>
+					<string name="conditionalVisLeft" value="conditionalVis1"/>
+					<string name="conditionalVisRight" value="conditionalVis2"/>
+					<string name="conditionalVis1Op" value="equalTo"/>
+					<string name="conditionalVis1Path" value="../disableAdaptiveError"/>
+					<string name="conditionalVis1Value" value="1"/>
+					<string name="conditionalVis2Op" value="equalTo"/>
+					<string name="conditionalVis2Path" value="../clampMeshResolution"/>
+					<string name="conditionalVis2Value" value="1"/>
+				</hintdict>
+				</int>
+			</group>
+	</group>
+</args>
+		
